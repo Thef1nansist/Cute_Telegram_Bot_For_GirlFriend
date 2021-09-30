@@ -32,11 +32,12 @@ namespace BotTelega.Commands
                         Model modelText = _ctx.Cute.ToArray()[index];
                         await _botClient.SendTextMessageAsync(_message.Chat.Id, $"{modelText.text}");
 
-                        WriteLog("GetCute",
-                            modelText.id,
-                            _message.Chat.Username,
-                            (int)_message.Chat.Id,
-                            _message.Date.ToLocalTime());
+                        Logger.Information($"Time:{_message.Date.ToLocalTime()};" +
+                                           $" Action: GetCute" +
+                                           $" id-{modelText.id}" +
+                                           $" User:{_message.Chat.Username};" +
+                                           $" ChatId:{_message.Chat.Id};"
+                                           , $"{_message.Chat.Username}");
                         break;
                     }
                 case "/getimage":
@@ -45,10 +46,12 @@ namespace BotTelega.Commands
                         ImageModel imageModel = _ctx.imageModels.ToArray()[index];
 
                         await _botClient.SendPhotoAsync(_message.Chat.Id, $"{imageModel.imageref}");
-                        WriteLog("GetImage", imageModel.id,
-                            _message.Chat.Username,
-                            (int)_message.Chat.Id,
-                            _message.Date.ToLocalTime());
+                        Logger.Information($"Time:{_message.Date.ToLocalTime()};" +
+                                        $" Action: GetImage" +
+                                        $" id-{imageModel.id}" +
+                                        $" User:{_message.Chat.Username};" +
+                                        $" ChatId:{_message.Chat.Id};"
+                                        , $"{_message.Chat.Username}");
                         break;
                     }
                 case "/getnewimgcute":
@@ -60,10 +63,12 @@ namespace BotTelega.Commands
                         await _botClient.SendPhotoAsync(_message.Chat.Id, stream);
 
                         stream.Dispose();
-                        WriteLog("GetNewImgCute", imageModel.id,
-                            _message.Chat.Username,
-                            (int)_message.Chat.Id,
-                            _message.Date.ToLocalTime());
+                        Logger.Information($"Time:{_message.Date.ToLocalTime()};" +
+                                                        $" Action: GetImage" +
+                                                        $" id-{imageModel.id}" +
+                                                        $" User:{_message.Chat.Username};" +
+                                                        $" ChatId:{_message.Chat.Id};"
+                                                        , $"{_message.Chat.Username}");
                         break;
                     }
                 case "/getaudio":
@@ -76,31 +81,17 @@ namespace BotTelega.Commands
                         await _botClient.SendAudioAsync(_message.Chat.Id, stream);
 
                         stream.Dispose();
-                        WriteLog("GetAudio",
-                            audio.id,
-                            _message.Chat.Username,
-                            (int)_message.Chat.Id,
-                            _message.Date.ToLocalTime());
+                        Logger.Information($"Time:{_message.Date.ToLocalTime()};" +
+                                                                        $" Action: GetImage" +
+                                                                        $" id-{audio.id}" +
+                                                                        $" User:{_message.Chat.Username};" +
+                                                                        $" ChatId:{_message.Chat.Id};"
+                                                                        , $"{_message.Chat.Username}");
                         break;
                     }
                 default:
                     break;
             }
-        }
-        private static void WriteLog(
-            string action,
-            int modelId,
-            string userName,
-            int chatId,
-            DateTime date)
-        {
-            Logger.Information($"Time:{date};" +
-                $" Action:{action}" +
-                $" id-{modelId}" +
-                $" User:{userName};" +
-                $" ChatId:{chatId};"
-                , $"{userName}");
-
         }
     }
 }
