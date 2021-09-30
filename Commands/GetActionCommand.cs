@@ -11,9 +11,9 @@ namespace BotTelega.Commands
 {
     public class GetActionCommand : IGetActionCommand
     {
-        private Message _message;
-        private TelegramBotClient _botClient;
-        private Context _ctx;
+        private readonly Message _message;
+        private readonly TelegramBotClient _botClient;
+        private readonly Context _ctx;
 
         public GetActionCommand(Message message, TelegramBotClient botClient, Context ctx)
         {
@@ -23,7 +23,7 @@ namespace BotTelega.Commands
         }
         public async Task TextCommand()
         {
-            Random rnd = new Random();
+            Random rnd = new();
             switch (_message.Text)
             {
                 case "/getcute":

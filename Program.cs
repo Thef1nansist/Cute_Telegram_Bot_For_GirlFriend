@@ -11,9 +11,9 @@ namespace BotTelega
 {
     class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main()
         {
-            BotTelegram bot = new BotTelegram("2012624409:AAG0IDvme3uIDEY6ebxvViLaK-U1E2aep8U", 0);
+            BotTelegram bot = new("2012624409:AAG0IDvme3uIDEY6ebxvViLaK-U1E2aep8U", 0);
             Console.WriteLine("Bot listening");
             await bot.StartBot();
         }

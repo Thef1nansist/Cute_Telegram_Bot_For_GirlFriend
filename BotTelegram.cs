@@ -8,9 +8,8 @@ namespace BotTelega
 {
     public class BotTelegram
     {
-        private string _token { get; set; }
-        private int _offset { get; set; }
-
+        private readonly string _token;
+        private int _offset;
         public BotTelegram(string token, int offset)
         {
             _token = token;
@@ -30,7 +29,7 @@ namespace BotTelega
                 {
                     try
                     {
-                        Context context = new Context();
+                        Context context = new();
                         var updates = await botClient.GetUpdatesAsync(_offset);
 
                         foreach (var update in updates)
@@ -41,6 +40,8 @@ namespace BotTelega
                                 _offset = update.Id + 1;
                                 break;
                             }
+
+
 
                             switch (message.Type)
                             {

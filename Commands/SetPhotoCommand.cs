@@ -8,9 +8,9 @@ namespace BotTelega.Commands
 {
     public class SetPhotoCommand : ISetPhotoCommand
     {
-        private Message _message;
-        private TelegramBotClient _botClient;
-        private Context _ctx;
+        private readonly Message _message;
+        private readonly TelegramBotClient _botClient;
+        private readonly Context _ctx;
 
         public SetPhotoCommand(Message message, TelegramBotClient botClient, Context ctx)
         {
