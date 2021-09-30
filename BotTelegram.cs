@@ -21,72 +21,78 @@ namespace BotTelega
         {
             try
             {
-            var botClient = new TelegramBotClient(_token);
-            var me = await botClient.GetMeAsync();
-            await botClient.SetWebhookAsync("");
+                var botClient = new TelegramBotClient(_token);
+                var me = await botClient.GetMeAsync();
+                var admin = "Progerser";
+                await botClient.SetWebhookAsync("");
 
-            while (true)
-            {
-                try
+                while (true)
                 {
-                    var updates = await botClient.GetUpdatesAsync(_offset);
-
-                    foreach (var update in updates)
+                    try
                     {
-                        var message = update.Message;
-                        if (message == null)
-                        {
-                            _offset = update.Id + 1;
-                            break;
-                        }
+                        Context context = new Context();
+                        var updates = await botClient.GetUpdatesAsync(_offset);
 
-                        switch (message.Type)
+                        foreach (var update in updates)
                         {
-                            case MessageType.Text:
-                                {
-                                    await GetActionCommand.TextCommand(message, botClient);
-                                    break;
-                                }
-                            case MessageType.Audio:
-                                {
-                                    if (message.Chat.Username == "Progerser")
-                                        await SetAudioCommand.AudioCommand(message, botClient);
-                                    else
-                                        await botClient.SendTextMessageAsync(message.Chat.Id, "You haven't acsses for added audio");
-                                    break;
-                                }
-                            case MessageType.Photo:
-                                {
-                                    if (message.Chat.Username == "Progerser")
-                                        await SetPhotoCommand.PhotoCommand(message, botClient);
-                                    else
-                                        await botClient.SendTextMessageAsync(message.Chat.Id, "You haven't acsses for added photo");
-                                    break;
-                                }
-                            default:
+                            var message = update.Message;
+                            if (message == null)
+                            {
+                                _offset = update.Id + 1;
                                 break;
+                            }
+
+                            switch (message.Type)
+                            {
+                                case MessageType.Text:
+                                    {
+                                        GetActionCommand getAction = new(message, botClient, context);
+                                        await getAction.TextCommand();
+                                        break;
+                                    }
+                                case MessageType.Audio:
+                                    {
+                                        if (admin.Equals(message.Chat.Username))
+                                        {
+                                            SetAudioCommand setAudio = new(message, botClient, context);
+                                            await setAudio.AudioCommand();
+                                        }
+                                        else
+                                            await botClient.SendTextMessageAsync(message.Chat.Id, "You haven't acsses for added audio");
+                                        break;
+                                    }
+                                case MessageType.Photo:
+                                    {
+                                        if (admin.Equals(message.Chat.Username))
+                                        {
+                                            SetPhotoCommand setPhoto = new(message, botClient, context);
+                                            await setPhoto.PhotoCommand();
+                                        }
+
+                                        else
+                                            await botClient.SendTextMessageAsync(message.Chat.Id, "You haven't acsses for added photo");
+                                        break;
+                                    }
+                                default:
+                                    break;
+                            }
+
+                            _offset = update.Id + 1;
                         }
 
-                        _offset = update.Id + 1;
                     }
-
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Server Destroed Inside");
+                        Console.WriteLine(ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Server Destroed");
-                    Console.WriteLine(ex);
-                }
-
-            }
             }
             catch (Exception ex)
             {
-
-                Console.WriteLine("Server Destroed");
+                Console.WriteLine("Server Destroed Outside");
                 Console.WriteLine(ex);
             }
-
-
         }
     }
 }

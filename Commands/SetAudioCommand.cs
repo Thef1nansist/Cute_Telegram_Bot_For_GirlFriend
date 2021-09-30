@@ -4,41 +4,52 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using System.Linq;
 using Telegram.Bot.Types;
+using BotTelega.Interfaces;
 
 namespace BotTelega.Commands
 {
-   public class SetAudioCommand
+    public class SetAudioCommand : ISetAudioCommand
     {
-        public static async Task AudioCommand(Message message, TelegramBotClient botClient)
+        private Message _message;
+        private TelegramBotClient _botClient;
+        private Context _ctx;
+
+        public SetAudioCommand(Message message, TelegramBotClient botClient, Context ctx)
         {
-            Context _context = new Context();
-            var id = message.Audio.FileId;
-            var file = await botClient.GetFileAsync(id);
+            _message = message;
+            _botClient = botClient;
+            _ctx = ctx;
+        }
+
+        public async Task AudioCommand()
+        {
+            var id = _message.Audio.FileId;
+            var file = await _botClient.GetFileAsync(id);
             string fileName = Path.GetFileName(file.FilePath);
 
             FileStream fs = new(fileName, FileMode.Create);
-            await botClient.DownloadFileAsync(file.FilePath, fs);
+            await _botClient.DownloadFileAsync(file.FilePath, fs);
             fs.Close();
 
             FileStream fS = new(fileName, FileMode.Open, FileAccess.Read);
             byte[] b = new byte[fS.Length];
             fS.Read(b, 0, (int)fS.Length);
-            _context.audioModels.Add(new AudioModel
+            _ctx.audioModels.Add(new AudioModel
             {
                 audioUser = b
-                
+
             });
-            await _context.SaveChangesAsync();
+            await _ctx.SaveChangesAsync();
 
             fS.Close();
-            _context.Dispose();
+            _ctx.Dispose();
             System.IO.File.Delete(fileName);
 
-            Logger.Information($"Time:{message.Date.ToLocalTime()};" +
+            Logger.Information($"Time:{_message.Date.ToLocalTime()};" +
                 $" Action: Save Audio" +
-                $" User:{message.Chat.Username};" +
-                $" ChatId:{message.Chat.Id};"
-                , $"{message.Chat.Username}");
+                $" User:{_message.Chat.Username};" +
+                $" ChatId:{_message.Chat.Id};"
+                , $"{_message.Chat.Username}");
         }
     }
 }
